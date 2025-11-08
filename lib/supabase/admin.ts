@@ -28,7 +28,7 @@ export const adminOperations = {
       .from('users')
       .insert(userData)
       .select()
-      .single()
+      .single() as any
   },
 
   async updateUserPlan(userId: string, plan: 'free' | 'paid') {
@@ -38,7 +38,7 @@ export const adminOperations = {
       .update({ plan })
       .eq('id', userId)
       .select()
-      .single()
+      .single() as any
   },
 
   // Subscription management
@@ -56,7 +56,7 @@ export const adminOperations = {
       .from('subscriptions')
       .insert(subscriptionData)
       .select()
-      .single()
+      .single() as any
   },
 
   async updateSubscriptionStatus(
@@ -73,7 +73,7 @@ export const adminOperations = {
       })
       .eq('stripe_subscription_id', stripeSubscriptionId)
       .select()
-      .single()
+      .single() as any
   },
 
   // Property deadline management
@@ -126,7 +126,7 @@ export const adminOperations = {
       .from('emails_sent')
       .insert(emailData)
       .select()
-      .single()
+      .single() as any
   },
 
   // Content management
@@ -140,7 +140,7 @@ export const adminOperations = {
       })
       .eq('id', ruleUpdateId)
       .select()
-      .single()
+      .single() as any
   },
 
   // Analytics and reporting

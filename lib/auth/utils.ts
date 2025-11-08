@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import type { User as AppUser } from '@/types'
@@ -8,7 +8,7 @@ import type { User as AppUser } from '@/types'
  */
 
 export async function getServerSession() {
-  const supabase = createServerClient()
+  const supabase = createClient()
   
   try {
     const {
@@ -31,7 +31,7 @@ export async function getServerAppUser(): Promise<AppUser | null> {
   const user = await getServerUser()
   if (!user) return null
 
-  const supabase = createServerClient()
+  const supabase = createClient()
   
   try {
     const { data: appUser, error } = await supabase
