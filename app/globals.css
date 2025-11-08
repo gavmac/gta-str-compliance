@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force dark text for all form elements */
+input, select, textarea, label {
+  @apply text-gray-900;
+}
+
+/* Ensure placeholder text is visible */
+input::placeholder, textarea::placeholder {
+  @apply text-gray-500;
+}
