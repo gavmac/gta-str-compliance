@@ -67,7 +67,7 @@ export default function UpdatesPage() {
         .order('published_at', { ascending: false })
 
       if (data) {
-        const formattedUpdates = data.map(update => ({
+        const formattedUpdates = data.map((update: any) => ({
           ...update,
           city: update.cities
         }))
