@@ -29,9 +29,9 @@ export class StripeWebhookHandlers {
       }
 
       // Update user plan to paid
-      const { error: userError } = await this.supabase
+      const { error: userError } = await (this.supabase
         .from('users')
-        .update({ 
+        .update as any)({ 
           plan: 'paid',
           updated_at: new Date().toISOString()
         })
@@ -43,9 +43,9 @@ export class StripeWebhookHandlers {
 
       // Create or update subscription record if we have subscription data
       if (session.subscription && session.customer) {
-        const { error: subscriptionError } = await this.supabase
+        const { error: subscriptionError } = await (this.supabase
           .from('subscriptions')
-          .upsert({
+          .upsert as any)({
             user_id: userId,
             stripe_customer_id: session.customer as string,
             stripe_subscription_id: session.subscription as string,
@@ -88,9 +88,9 @@ export class StripeWebhookHandlers {
       }
 
       // Update subscription with full details
-      const { error: updateError } = await this.supabase
+      const { error: updateError } = await (this.supabase
         .from('subscriptions')
-        .update({
+        .update as any)({
           stripe_subscription_id: subscription.id,
           status: subscription.status as any,
           current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
@@ -120,9 +120,9 @@ export class StripeWebhookHandlers {
       console.log('Processing customer.subscription.updated:', subscription.id)
 
       // Update subscription status
-      const { error: updateError } = await this.supabase
+      const { error: updateError } = await (this.supabase
         .from('subscriptions')
-        .update({
+        .update as any)({
           status: subscription.status as any,
           current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
           current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
@@ -145,9 +145,9 @@ export class StripeWebhookHandlers {
         if (subscriptionData) {
           const newPlan = subscription.status === 'canceled' ? 'free' : 'paid'
           
-          const { error: userError } = await this.supabase
+          const { error: userError } = await (this.supabase
             .from('users')
-            .update({ 
+            .update as any)({ 
               plan: newPlan,
               updated_at: new Date().toISOString()
             })
@@ -176,9 +176,9 @@ export class StripeWebhookHandlers {
       console.log('Processing customer.subscription.deleted:', subscription.id)
 
       // Update subscription status to canceled
-      const { error: updateError } = await this.supabase
+      const { error: updateError } = await (this.supabase
         .from('subscriptions')
-        .update({
+        .update as any)({
           status: 'canceled',
           updated_at: new Date().toISOString()
         })
@@ -196,9 +196,9 @@ export class StripeWebhookHandlers {
         .single()
 
       if (subscriptionData) {
-        const { error: userError } = await this.supabase
+        const { error: userError } = await (this.supabase
           .from('users')
-          .update({ 
+          .update as any)({ 
             plan: 'free',
             updated_at: new Date().toISOString()
           })
@@ -231,9 +231,9 @@ export class StripeWebhookHandlers {
       }
 
       // Ensure subscription is active
-      const { error: updateError } = await this.supabase
+      const { error: updateError } = await (this.supabase
         .from('subscriptions')
-        .update({
+        .update as any)({
           status: 'active',
           updated_at: new Date().toISOString()
         })
@@ -251,9 +251,9 @@ export class StripeWebhookHandlers {
         .single()
 
       if (subscriptionData) {
-        const { error: userError } = await this.supabase
+        const { error: userError } = await (this.supabase
           .from('users')
-          .update({ 
+          .update as any)({ 
             plan: 'paid',
             updated_at: new Date().toISOString()
           })
@@ -286,9 +286,9 @@ export class StripeWebhookHandlers {
       }
 
       // Update subscription status to past_due
-      const { error: updateError } = await this.supabase
+      const { error: updateError } = await (this.supabase
         .from('subscriptions')
-        .update({
+        .update as any)({
           status: 'past_due',
           updated_at: new Date().toISOString()
         })
