@@ -55,7 +55,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('users')
         .select('plan')
         .eq('id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(userData?.plan).toBe('paid')
 
@@ -98,7 +98,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('subscriptions')
         .select('*')
         .eq('user_id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(subscriptionData?.stripe_subscription_id).toBe('sub_test_subscription')
       expect(subscriptionData?.current_period_start).toBeDefined()
@@ -136,7 +136,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('subscriptions')
         .select('status')
         .eq('user_id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(subscriptionData?.status).toBe('active')
     })
@@ -153,7 +153,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('users')
         .select('plan')
         .eq('id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(userData?.plan).toBe('free')
     })
@@ -170,7 +170,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('users')
         .select('plan')
         .eq('id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(userData?.plan).toBe('paid')
     })
@@ -198,7 +198,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('subscriptions')
         .select('status')
         .eq('user_id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(subscriptionData?.status).toBe('canceled')
 
@@ -207,7 +207,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('users')
         .select('plan')
         .eq('id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(userData?.plan).toBe('free')
     })
@@ -235,7 +235,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('subscriptions')
         .select('status')
         .eq('stripe_subscription_id', 'sub_test_subscription')
-        .single()
+        .single() as { data: any; error: any }
 
       expect(subscriptionData?.status).toBe('active')
 
@@ -244,7 +244,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('users')
         .select('plan')
         .eq('id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(userData?.plan).toBe('paid')
     })
@@ -282,7 +282,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('subscriptions')
         .select('status')
         .eq('stripe_subscription_id', 'sub_test_subscription')
-        .single()
+        .single() as { data: any; error: any }
 
       expect(subscriptionData?.status).toBe('past_due')
     })

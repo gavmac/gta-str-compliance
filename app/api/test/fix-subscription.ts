@@ -23,9 +23,9 @@ export async function POST() {
 
   try {
     // Update user to paid plan
-    await supabase
+    await (supabase
       .from('users')
-      .upsert({
+      .upsert as any)({
         id: user.id,
         email: user.email!,
         plan: 'paid',
@@ -33,9 +33,9 @@ export async function POST() {
       })
 
     // Create active subscription
-    await supabase
+    await (supabase
       .from('subscriptions')
-      .upsert({
+      .upsert as any)({
         user_id: user.id,
         stripe_customer_id: 'manual_upgrade',
         stripe_subscription_id: `manual_${user.id}`,

@@ -21,14 +21,14 @@ export async function POST() {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  await supabase.from('users').upsert({
+  await (supabase.from('users').upsert as any)({
     id: user.id,
     email: user.email!,
     plan: 'paid',
     city_id: 1
   })
 
-  await supabase.from('subscriptions').upsert({
+  await (supabase.from('subscriptions').upsert as any)({
     user_id: user.id,
     stripe_customer_id: 'fix',
     stripe_subscription_id: `fix_${user.id}`,

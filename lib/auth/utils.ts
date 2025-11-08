@@ -38,7 +38,7 @@ export async function getServerAppUser(): Promise<AppUser | null> {
       .from('users')
       .select('*')
       .eq('id', user.id)
-      .single()
+      .single() as { data: any; error: any }
 
     if (error || !appUser) {
       console.error('Error fetching app user:', error)

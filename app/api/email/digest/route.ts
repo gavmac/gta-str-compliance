@@ -52,7 +52,7 @@ export async function POST() {
         console.log(`Sending digest to ${user.email}:`, digest)
         
         // Log email sent
-        await supabase.from('emails_sent').insert({
+        await (supabase.from('emails_sent').insert as any)({
           user_id: user.id,
           kind: 'personalized_digest',
           subject: 'Your Monthly Compliance Digest',

@@ -152,9 +152,9 @@ export async function testSubscriptionLifecycle() {
   try {
     // 1. Create test user
     console.log('1️⃣ Creating test user...')
-    const { error: userError } = await supabase
+    const { error: userError } = await (supabase
       .from('users')
-      .insert({
+      .insert as any)({
         id: userId,
         email: `test-${Date.now()}@example.com`,
         plan: 'free'
@@ -181,13 +181,13 @@ export async function testSubscriptionLifecycle() {
       .from('users')
       .select('*')
       .eq('id', userId)
-      .single()
+      .single() as { data: any; error: any }
 
     const { data: subscriptionData } = await supabase
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
-      .single()
+      .single() as { data: any; error: any }
 
     console.log('User data:', userData)
     console.log('Subscription data:', subscriptionData)
@@ -203,13 +203,13 @@ export async function testSubscriptionLifecycle() {
       .from('users')
       .select('*')
       .eq('id', userId)
-      .single()
+      .single() as { data: any; error: any }
 
     const { data: finalSubscriptionData } = await supabase
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
-      .single()
+      .single() as { data: any; error: any }
 
     console.log('Final user data:', finalUserData)
     console.log('Final subscription data:', finalSubscriptionData)

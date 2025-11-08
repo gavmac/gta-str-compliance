@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
           .from('users')
           .select('id')
           .eq('id', data.user.id)
-          .single()
+          .single() as { data: { id: string } | null; error: any }
 
         if (!existingUser) {
           // Create user profile

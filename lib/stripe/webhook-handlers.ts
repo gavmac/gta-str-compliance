@@ -81,7 +81,7 @@ export class StripeWebhookHandlers {
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_customer_id', subscription.customer as string)
-        .single()
+        .single() as { data: { user_id: string } | null; error: any }
 
       if (findError || !subscriptionData) {
         throw new Error(`Could not find user for customer: ${subscription.customer}`)
@@ -140,7 +140,7 @@ export class StripeWebhookHandlers {
           .from('subscriptions')
           .select('user_id')
           .eq('stripe_subscription_id', subscription.id)
-          .single()
+          .single() as { data: { user_id: string } | null; error: any }
 
         if (subscriptionData) {
           const newPlan = subscription.status === 'canceled' ? 'free' : 'paid'
@@ -193,7 +193,7 @@ export class StripeWebhookHandlers {
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_subscription_id', subscription.id)
-        .single()
+        .single() as { data: { user_id: string } | null; error: any }
 
       if (subscriptionData) {
         const { error: userError } = await (this.supabase
@@ -248,7 +248,7 @@ export class StripeWebhookHandlers {
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_subscription_id', invoice.subscription as string)
-        .single()
+        .single() as { data: { user_id: string } | null; error: any }
 
       if (subscriptionData) {
         const { error: userError } = await (this.supabase

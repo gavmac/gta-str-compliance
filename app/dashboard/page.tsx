@@ -107,7 +107,7 @@ export default function DashboardPage() {
         .from('users')
         .select('*')
         .eq('id', user.id)
-        .single()
+        .single() as { data: any; error: any }
 
       if (error) {
         console.error('Error fetching profile:', error)

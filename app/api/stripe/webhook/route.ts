@@ -50,9 +50,9 @@ export async function POST(request: NextRequest) {
       const userId = session.client_reference_id || 'dev-user-123'
       
       // Create user and upgrade to paid
-      const { error: userError } = await supabase
+      const { error: userError } = await (supabase
         .from('users')
-        .upsert({
+        .upsert as any)({
           id: userId,
           email: session.customer_details?.email || 'dev@example.com',
           plan: 'paid'
@@ -65,9 +65,9 @@ export async function POST(request: NextRequest) {
       }
 
       // Create subscription record
-      const { error: subError } = await supabase
+      const { error: subError } = await (supabase
         .from('subscriptions')
-        .upsert({
+        .upsert as any)({
           user_id: userId,
           stripe_customer_id: session.customer,
           stripe_subscription_id: session.subscription || `checkout_${session.id}`,
