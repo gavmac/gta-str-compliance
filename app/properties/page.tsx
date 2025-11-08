@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { calculateComplianceScore } from '@/lib/compliance/scoring'
@@ -24,7 +24,7 @@ export default function PropertiesPage() {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
     if (!supabase) {
       setProperties([
         {
@@ -53,11 +53,11 @@ export default function PropertiesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchProperties()
-  }, [])
+  }, [fetchProperties])
 
   return (
     <div className="min-h-screen bg-gray-50">

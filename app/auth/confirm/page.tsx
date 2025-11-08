@@ -1,9 +1,10 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function ConfirmPage() {
+function ConfirmContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email')
 
@@ -26,7 +27,7 @@ export default function ConfirmPage() {
           
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h1>
           <p className="text-gray-600">
-            We've sent a confirmation link to{' '}
+            We&apos;ve sent a confirmation link to{' '}
             {email && (
               <span className="font-medium text-gray-900">{email}</span>
             )}
@@ -48,7 +49,7 @@ export default function ConfirmPage() {
                 <ol className="list-decimal list-inside space-y-1">
                   <li>Check your email inbox (and spam folder)</li>
                   <li>Click the confirmation link in the email</li>
-                  <li>You'll be automatically signed in</li>
+                  <li>You&apos;ll be automatically signed in</li>
                 </ol>
               </div>
             </div>
@@ -65,7 +66,7 @@ export default function ConfirmPage() {
           
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Didn't receive the email?{' '}
+              Didn&apos;t receive the email?{' '}
               <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
                 Try signing up again
               </Link>
@@ -74,5 +75,13 @@ export default function ConfirmPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ConfirmPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConfirmContent />
+    </Suspense>
   )
 }

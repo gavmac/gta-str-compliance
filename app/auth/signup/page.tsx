@@ -166,7 +166,7 @@ export default function SignUpPage() {
               <option value="4">Markham</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              We'll send you compliance updates for your city
+              We&apos;ll send you compliance updates for your city
             </p>
           </div>
 

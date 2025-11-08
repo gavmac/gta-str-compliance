@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User, Session } from '@supabase/supabase-js'
 import type { User as AppUser } from '@/types'
@@ -25,28 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   
   const supabase = createClient()
-  
-  // If Supabase is not configured, provide a mock auth state
-  if (!supabase) {
-    const mockValue = {
-      user: null,
-      appUser: null,
-      session: null,
-      loading: false,
-      signIn: async () => ({ error: new Error('Supabase not configured') }),
-      signUp: async () => ({ error: new Error('Supabase not configured') }),
-      signOut: async () => ({ error: new Error('Supabase not configured') }),
-      refreshUser: async () => {},
-    }
-    
-    return (
-      <AuthContext.Provider value={mockValue}>
-        {children}
-      </AuthContext.Provider>
-    )
-  }
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     if (!user) {
       setAppUser(null)
       return
@@ -69,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error refreshing user:', error)
       setAppUser(null)
     }
-  }
+  }, [user, supabase])
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -152,14 +132,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [refreshUser, supabase.auth])
 
   // Refresh app user data when auth user changes
   useEffect(() => {
     if (user && !loading) {
       refreshUser()
     }
-  }, [user, loading])
+  }, [user, loading, refreshUser])
+
+  // If Supabase is not configured, provide a mock auth state
+  if (!supabase) {
+    const mockValue = {
+      user: null,
+      appUser: null,
+      session: null,
+      loading: false,
+      signIn: async () => ({ error: new Error('Supabase not configured') }),
+      signUp: async () => ({ error: new Error('Supabase not configured') }),
+      signOut: async () => ({ error: new Error('Supabase not configured') }),
+      refreshUser: async () => {},
+    }
+    
+    return (
+      <AuthContext.Provider value={mockValue}>
+        {children}
+      </AuthContext.Provider>
+    )
+  }
 
   const value = {
     user,

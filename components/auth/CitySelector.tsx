@@ -49,7 +49,7 @@ export default function CitySelector({
     }
 
     loadCities()
-  }, [])
+  }, [supabase])
 
   if (loading) {
     return (
@@ -91,7 +91,7 @@ export default function CitySelector({
         ))}
       </select>
       <p className="mt-1 text-xs text-gray-500">
-        You'll receive compliance updates for your selected city
+        You&apos;ll receive compliance updates for your selected city
       </p>
     </div>
   )
