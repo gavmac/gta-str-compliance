@@ -40,7 +40,7 @@ export async function getServerAppUser(): Promise<AppUser | null> {
       .eq('id', user.id)
       .single()
 
-    if (error) {
+    if (error || !appUser) {
       console.error('Error fetching app user:', error)
       return null
     }

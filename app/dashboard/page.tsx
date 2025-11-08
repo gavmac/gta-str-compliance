@@ -111,7 +111,7 @@ export default function DashboardPage() {
 
       if (error) {
         console.error('Error fetching profile:', error)
-      } else {
+      } else if (profileData) {
         setProfile(profileData)
       }
 

@@ -19,9 +19,9 @@ export async function POST(request: NextRequest) {
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', userId)
-      .single()
+      .single() as { data: { stripe_customer_id: string } | null; error: any }
 
-    if (subscriptionError || !subscriptionData?.stripe_customer_id) {
+    if (subscriptionError || !subscriptionData || !subscriptionData.stripe_customer_id) {
       return NextResponse.json(
         { error: 'No active subscription found' },
         { status: 404 }
