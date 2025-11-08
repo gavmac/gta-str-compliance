@@ -45,9 +45,9 @@ export async function GET(request: NextRequest) {
 
         if (!existingUser) {
           // Create user profile
-          const { error: profileError } = await supabase
+          const { error: profileError } = await (supabase
             .from('users')
-            .insert({
+            .insert as any)({
               id: data.user.id,
               email: data.user.email!,
               plan: 'free',

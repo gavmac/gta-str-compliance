@@ -310,7 +310,7 @@ export default function AddPropertyForm({ onClose, onAdd }: AddPropertyFormProps
               </div>
             )}
             
-            {municipality === 'mississauga' && usageType !== 'long_term' && (
+            {municipality === 'mississauga' && (
               <div className="border-t pt-3 mt-3">
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Mississauga Requirements (By-law 0289-2020)</h4>
                 <div className="space-y-2">
@@ -345,7 +345,7 @@ export default function AddPropertyForm({ onClose, onAdd }: AddPropertyFormProps
               </div>
             )}
             
-            {municipality === 'brampton' && usageType !== 'long_term' && (
+            {municipality === 'brampton' && (
               <div className="border-t pt-3 mt-3">
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Brampton Requirements (By-law 165-2021)</h4>
                 <div className="space-y-2">
@@ -362,7 +362,7 @@ export default function AddPropertyForm({ onClose, onAdd }: AddPropertyFormProps
               </div>
             )}
             
-            {municipality === 'vaughan' && usageType !== 'long_term' && (
+            {municipality === 'vaughan' && (
               <div className="border-t pt-3 mt-3">
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Vaughan Requirements (By-law 158-2019)</h4>
                 <div className="space-y-2">
@@ -379,7 +379,7 @@ export default function AddPropertyForm({ onClose, onAdd }: AddPropertyFormProps
               </div>
             )}
             
-            {municipality === 'newmarket' && usageType !== 'long_term' && (
+            {municipality === 'newmarket' && (
               <div className="border-t pt-3 mt-3">
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Newmarket MAT Requirements (By-law 2024-68)</h4>
                 <div className="space-y-2">

@@ -131,7 +131,7 @@ export default function DashboardPage() {
         .limit(5)
 
       if (updatesData) {
-        const formattedUpdates = updatesData.map(update => ({
+        const formattedUpdates = updatesData.map((update: any) => ({
           ...update,
           city: update.cities
         }))

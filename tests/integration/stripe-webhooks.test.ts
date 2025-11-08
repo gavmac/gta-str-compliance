@@ -64,7 +64,7 @@ describe('Stripe Webhook Handlers', () => {
         .from('subscriptions')
         .select('*')
         .eq('user_id', testUserId)
-        .single()
+        .single() as { data: any; error: any }
 
       expect(subscriptionData?.stripe_customer_id).toBe(testCustomerId)
       expect(subscriptionData?.status).toBe('active')

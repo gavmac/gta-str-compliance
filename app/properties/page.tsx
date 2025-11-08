@@ -16,6 +16,14 @@ interface Property {
   compliance_score?: number
   compliance_explanation?: string
   failing_rules?: any[]
+  mat_reporting?: {
+    reporting_frequency: 'monthly' | 'quarterly'
+    due_description: string
+    requires_zero_return: boolean
+  }
+  next_mat_due?: {
+    dueDate: string
+  }
 }
 
 export default function PropertiesPage() {
