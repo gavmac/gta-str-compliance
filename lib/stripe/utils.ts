@@ -27,7 +27,7 @@ export async function createCheckoutSession({
       .select('stripe_customer_id')
       .eq('user_id', user.id)
       .not('stripe_customer_id', 'is', null)
-      .single()
+      .single() as { data: { stripe_customer_id: string } | null; error: any }
 
     if (existingSubscription?.stripe_customer_id) {
       customerId = existingSubscription.stripe_customer_id
