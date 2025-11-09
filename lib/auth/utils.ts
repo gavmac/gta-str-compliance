@@ -34,11 +34,11 @@ export async function getServerAppUser(): Promise<AppUser | null> {
   const supabase = createClient()
   
   try {
-    const { data: appUser, error } = await supabase
+    const { data: appUser, error } = await (supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
-      .single() as { data: any; error: any }
+      .single as any)()
 
     if (error || !appUser) {
       console.error('Error fetching app user:', error)

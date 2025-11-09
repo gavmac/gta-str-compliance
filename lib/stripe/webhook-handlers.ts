@@ -29,12 +29,12 @@ export class StripeWebhookHandlers {
       }
 
       // Update user plan to paid
-      const { error: userError } = await (this.supabase
+      const { error: userError } = await this.supabase
         .from('users')
-        .update as any)({ 
+        .update({ 
           plan: 'paid',
           updated_at: new Date().toISOString()
-        })
+        } satisfies Database['public']['Tables']['users']['Update'])
         .eq('id', userId)
 
       if (userError) {
@@ -43,9 +43,9 @@ export class StripeWebhookHandlers {
 
       // Create or update subscription record if we have subscription data
       if (session.subscription && session.customer) {
-        const { error: subscriptionError } = await (this.supabase
+        const { error: subscriptionError } = await this.supabase
           .from('subscriptions')
-          .upsert as any)({
+          .upsert({
             user_id: userId,
             stripe_customer_id: session.customer as string,
             stripe_subscription_id: session.subscription as string,
@@ -53,7 +53,7 @@ export class StripeWebhookHandlers {
             plan_name: session.metadata?.plan || 'pro',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
-          })
+          } satisfies Database['public']['Tables']['subscriptions']['Insert'])
 
         if (subscriptionError) {
           throw new Error(`Failed to create subscription: ${subscriptionError.message}`)
@@ -81,22 +81,22 @@ export class StripeWebhookHandlers {
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_customer_id', subscription.customer as string)
-        .single() as { data: { user_id: string } | null; error: any }
+        .single()
 
       if (findError || !subscriptionData) {
         throw new Error(`Could not find user for customer: ${subscription.customer}`)
       }
 
       // Update subscription with full details
-      const { error: updateError } = await (this.supabase
+      const { error: updateError } = await this.supabase
         .from('subscriptions')
-        .update as any)({
+        .update({
           stripe_subscription_id: subscription.id,
-          status: subscription.status as any,
+          status: subscription.status as 'active' | 'past_due' | 'canceled' | 'incomplete' | 'trialing',
           current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
           current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
           updated_at: new Date().toISOString()
-        })
+        } satisfies Database['public']['Tables']['subscriptions']['Update'])
         .eq('stripe_customer_id', subscription.customer as string)
 
       if (updateError) {
@@ -120,14 +120,14 @@ export class StripeWebhookHandlers {
       console.log('Processing customer.subscription.updated:', subscription.id)
 
       // Update subscription status
-      const { error: updateError } = await (this.supabase
+      const { error: updateError } = await this.supabase
         .from('subscriptions')
-        .update as any)({
-          status: subscription.status as any,
+        .update({
+          status: subscription.status as 'active' | 'past_due' | 'canceled' | 'incomplete' | 'trialing',
           current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
           current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
           updated_at: new Date().toISOString()
-        })
+        } satisfies Database['public']['Tables']['subscriptions']['Update'])
         .eq('stripe_subscription_id', subscription.id)
 
       if (updateError) {
@@ -140,17 +140,17 @@ export class StripeWebhookHandlers {
           .from('subscriptions')
           .select('user_id')
           .eq('stripe_subscription_id', subscription.id)
-          .single() as { data: { user_id: string } | null; error: any }
+          .single()
 
         if (subscriptionData) {
           const newPlan = subscription.status === 'canceled' ? 'free' : 'paid'
           
-          const { error: userError } = await (this.supabase
+          const { error: userError } = await this.supabase
             .from('users')
-            .update as any)({ 
+            .update({ 
               plan: newPlan,
               updated_at: new Date().toISOString()
-            })
+            } satisfies Database['public']['Tables']['users']['Update'])
             .eq('id', subscriptionData.user_id)
 
           if (userError) {
@@ -176,12 +176,12 @@ export class StripeWebhookHandlers {
       console.log('Processing customer.subscription.deleted:', subscription.id)
 
       // Update subscription status to canceled
-      const { error: updateError } = await (this.supabase
+      const { error: updateError } = await this.supabase
         .from('subscriptions')
-        .update as any)({
+        .update({
           status: 'canceled',
           updated_at: new Date().toISOString()
-        })
+        } satisfies Database['public']['Tables']['subscriptions']['Update'])
         .eq('stripe_subscription_id', subscription.id)
 
       if (updateError) {
@@ -193,15 +193,15 @@ export class StripeWebhookHandlers {
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_subscription_id', subscription.id)
-        .single() as { data: { user_id: string } | null; error: any }
+        .single()
 
       if (subscriptionData) {
-        const { error: userError } = await (this.supabase
+        const { error: userError } = await this.supabase
           .from('users')
-          .update as any)({ 
+          .update({ 
             plan: 'free',
             updated_at: new Date().toISOString()
-          })
+          } satisfies Database['public']['Tables']['users']['Update'])
           .eq('id', subscriptionData.user_id)
 
         if (userError) {
@@ -231,12 +231,12 @@ export class StripeWebhookHandlers {
       }
 
       // Ensure subscription is active
-      const { error: updateError } = await (this.supabase
+      const { error: updateError } = await this.supabase
         .from('subscriptions')
-        .update as any)({
+        .update({
           status: 'active',
           updated_at: new Date().toISOString()
-        })
+        } satisfies Database['public']['Tables']['subscriptions']['Update'])
         .eq('stripe_subscription_id', invoice.subscription as string)
 
       if (updateError) {
@@ -248,15 +248,15 @@ export class StripeWebhookHandlers {
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_subscription_id', invoice.subscription as string)
-        .single() as { data: { user_id: string } | null; error: any }
+        .single()
 
       if (subscriptionData) {
-        const { error: userError } = await (this.supabase
+        const { error: userError } = await this.supabase
           .from('users')
-          .update as any)({ 
+          .update({ 
             plan: 'paid',
             updated_at: new Date().toISOString()
-          })
+          } satisfies Database['public']['Tables']['users']['Update'])
           .eq('id', subscriptionData.user_id)
 
         if (userError) {
@@ -286,12 +286,12 @@ export class StripeWebhookHandlers {
       }
 
       // Update subscription status to past_due
-      const { error: updateError } = await (this.supabase
+      const { error: updateError } = await this.supabase
         .from('subscriptions')
-        .update as any)({
+        .update({
           status: 'past_due',
           updated_at: new Date().toISOString()
-        })
+        } satisfies Database['public']['Tables']['subscriptions']['Update'])
         .eq('stripe_subscription_id', invoice.subscription as string)
 
       if (updateError) {

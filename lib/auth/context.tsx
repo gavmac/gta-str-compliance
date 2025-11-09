@@ -33,11 +33,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data: userData, error } = await supabase
+      const { data: userData, error } = await (supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
-        .single() as { data: any; error: any }
+        .single as any)()
 
       if (error) {
         console.error('Error fetching user data:', error)

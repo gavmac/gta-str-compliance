@@ -17,18 +17,13 @@ export const createAdminClient = () => {
 // Helper functions for admin operations
 export const adminOperations = {
   // User management
-  async createUser(userData: {
-    id: string
-    email: string
-    plan?: 'free' | 'paid'
-    city_id?: number
-  }) {
+  async createUser(userData: Database['public']['Tables']['users']['Insert']) {
     const supabase = createAdminClient()
     return await supabase
       .from('users')
       .insert(userData)
       .select()
-      .single() as any
+      .single()
   },
 
   async updateUserPlan(userId: string, plan: 'free' | 'paid') {
@@ -38,25 +33,17 @@ export const adminOperations = {
       .update({ plan })
       .eq('id', userId)
       .select()
-      .single() as any
+      .single()
   },
 
   // Subscription management
-  async createSubscription(subscriptionData: {
-    user_id: string
-    stripe_customer_id?: string
-    stripe_subscription_id?: string
-    status: 'active' | 'past_due' | 'canceled' | 'incomplete' | 'trialing'
-    plan_name: string
-    current_period_start?: string
-    current_period_end?: string
-  }) {
+  async createSubscription(subscriptionData: Database['public']['Tables']['subscriptions']['Insert']) {
     const supabase = createAdminClient()
     return await supabase
       .from('subscriptions')
       .insert(subscriptionData)
       .select()
-      .single() as any
+      .single()
   },
 
   async updateSubscriptionStatus(
@@ -73,7 +60,7 @@ export const adminOperations = {
       })
       .eq('stripe_subscription_id', stripeSubscriptionId)
       .select()
-      .single() as any
+      .single()
   },
 
   // Property deadline management
@@ -112,21 +99,13 @@ export const adminOperations = {
   },
 
   // Email tracking
-  async logEmailSent(emailData: {
-    user_id?: string
-    kind: 'city_digest' | 'personalized_digest' | 'due_soon' | 'welcome' | 'other'
-    city_id?: number
-    subject: string
-    recipient_email: string
-    status?: 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced'
-    external_id?: string
-  }) {
+  async logEmailSent(emailData: Database['public']['Tables']['emails_sent']['Insert']) {
     const supabase = createAdminClient()
     return await supabase
       .from('emails_sent')
       .insert(emailData)
       .select()
-      .single() as any
+      .single()
   },
 
   // Content management
@@ -140,7 +119,7 @@ export const adminOperations = {
       })
       .eq('id', ruleUpdateId)
       .select()
-      .single() as any
+      .single()
   },
 
   // Analytics and reporting

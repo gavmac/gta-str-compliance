@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import type { Database } from '@/types/database'
@@ -8,20 +8,25 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code')
 
   if (code) {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
+          getAll() {
+            return cookieStore.getAll()
           },
-          set(name: string, value: string, options: CookieOptions) {
-            cookieStore.set({ name, value, ...options })
-          },
-          remove(name: string, options: CookieOptions) {
-            cookieStore.set({ name, value: '', ...options })
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              )
+            } catch {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
           },
         },
       }
@@ -37,21 +42,22 @@ export async function GET(request: NextRequest) {
 
       if (data.user) {
         // Check if user profile exists, create if not
-        const { data: existingUser } = await supabase
+        const { data: existingUser } = await (supabase
           .from('users')
           .select('id')
           .eq('id', data.user.id)
-          .single() as { data: { id: string } | null; error: any }
+          .single as any)()
 
         if (!existingUser) {
           // Create user profile
+          const userData: Database['public']['Tables']['users']['Insert'] = {
+            id: data.user.id,
+            email: data.user.email!,
+            plan: 'free',
+          }
           const { error: profileError } = await (supabase
             .from('users')
-            .insert as any)({
-              id: data.user.id,
-              email: data.user.email!,
-              plan: 'free',
-            })
+            .insert as any)(userData)
 
           if (profileError) {
             console.error('Error creating user profile:', profileError)

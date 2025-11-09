@@ -1,20 +1,8 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST() {
-  const cookieStore = cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    }
-  )
+  const supabase = createAdminClient()
 
   try {
     // Get paid users with properties
@@ -52,13 +40,14 @@ export async function POST() {
         console.log(`Sending digest to ${user.email}:`, digest)
         
         // Log email sent
-        await (supabase.from('emails_sent').insert as any)({
+        const emailData = {
           user_id: user.id,
-          kind: 'personalized_digest',
+          kind: 'personalized_digest' as const,
           subject: 'Your Monthly Compliance Digest',
           recipient_email: user.email,
-          status: 'sent'
-        })
+          status: 'sent' as const
+        }
+        await (supabase.from('emails_sent').insert as any)(emailData)
 
         emailsSent.push(user.email)
       }

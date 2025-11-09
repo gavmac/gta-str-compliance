@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/database'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
@@ -54,14 +55,15 @@ export default function SignUpPage() {
 
       if (authData.user) {
         // Create user profile in our database
+        const userData: Database['public']['Tables']['users']['Insert'] = {
+          id: authData.user.id,
+          email: authData.user.email!,
+          plan: 'free',
+          city_id: cityId ? parseInt(cityId) : null,
+        }
         const { error: profileError } = await (supabase
           .from('users')
-          .insert as any)({
-            id: authData.user.id,
-            email: authData.user.email!,
-            plan: 'free',
-            city_id: cityId ? parseInt(cityId) : null,
-          })
+          .insert as any)(userData)
 
         if (profileError) {
           console.error('Error creating user profile:', profileError)

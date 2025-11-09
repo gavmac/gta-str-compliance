@@ -53,7 +53,7 @@ export default function UpdatesPage() {
     }
 
     const fetchUpdates = async () => {
-      const { data } = await supabase
+      const { data } = await (supabase
         .from('rule_updates')
         .select(`
           id,
@@ -64,7 +64,7 @@ export default function UpdatesPage() {
           cities!inner(name, slug)
         `)
         .eq('is_published', true)
-        .order('published_at', { ascending: false })
+        .order as any)('published_at', { ascending: false })
 
       if (data) {
         const formattedUpdates = data.map((update: any) => ({

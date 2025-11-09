@@ -22,12 +22,12 @@ export async function createCheckoutSession({
     let customerId: string
 
     // Check if user already has a Stripe customer ID
-    const { data: existingSubscription } = await supabase
+    const { data: existingSubscription } = await (supabase
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', user.id)
       .not('stripe_customer_id', 'is', null)
-      .single() as { data: { stripe_customer_id: string } | null; error: any }
+      .single as any)()
 
     if (existingSubscription?.stripe_customer_id) {
       customerId = existingSubscription.stripe_customer_id

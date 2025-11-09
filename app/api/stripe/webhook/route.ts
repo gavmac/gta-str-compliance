@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -31,18 +30,7 @@ export async function POST(request: NextRequest) {
 
   console.log(`Webhook: ${event.type}`)
 
-  const cookieStore = cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    }
-  )
+  const supabase = createAdminClient()
 
   try {
     if (event.type === 'checkout.session.completed') {
@@ -50,13 +38,12 @@ export async function POST(request: NextRequest) {
       const userId = session.client_reference_id || 'dev-user-123'
       
       // Create user and upgrade to paid
-      const { error: userError } = await (supabase
-        .from('users')
-        .upsert as any)({
-          id: userId,
-          email: session.customer_details?.email || 'dev@example.com',
-          plan: 'paid'
-        })
+      const userData = {
+        id: userId,
+        email: session.customer_details?.email || 'dev@example.com',
+        plan: 'paid' as const
+      }
+      const { error: userError } = await (supabase.from('users').upsert as any)(userData)
 
       if (userError) {
         console.error('Error upgrading user:', userError)
@@ -65,17 +52,16 @@ export async function POST(request: NextRequest) {
       }
 
       // Create subscription record
-      const { error: subError } = await (supabase
-        .from('subscriptions')
-        .upsert as any)({
-          user_id: userId,
-          stripe_customer_id: session.customer,
-          stripe_subscription_id: session.subscription || `checkout_${session.id}`,
-          status: 'active',
-          plan_name: 'paid',
-          current_period_start: new Date().toISOString(),
-          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        })
+      const subscriptionData = {
+        user_id: userId,
+        stripe_customer_id: session.customer,
+        stripe_subscription_id: session.subscription || `checkout_${session.id}`,
+        status: 'active' as const,
+        plan_name: 'paid',
+        current_period_start: new Date().toISOString(),
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      }
+      const { error: subError } = await (supabase.from('subscriptions').upsert as any)(subscriptionData)
 
       if (subError) {
         console.error('Error creating subscription:', subError)

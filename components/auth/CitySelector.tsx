@@ -27,11 +27,11 @@ export default function CitySelector({
     const loadCities = async () => {
       try {
         setLoading(true)
-        const { data, error } = await supabase
+        const { data, error } = await (supabase
           .from('cities')
           .select('*')
           .eq('is_active', true)
-          .order('name')
+          .order as any)('name')
 
         if (error) {
           setError('Failed to load cities')

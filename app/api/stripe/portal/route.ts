@@ -14,12 +14,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user's Stripe customer ID
-    const supabase = createClient()
-    const { data: subscriptionData, error: subscriptionError } = await supabase
+    const supabase = await createClient()
+    const { data: subscriptionData, error: subscriptionError } = await (supabase
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', userId)
-      .single() as { data: { stripe_customer_id: string } | null; error: any }
+      .single as any)()
 
     if (subscriptionError || !subscriptionData || !subscriptionData.stripe_customer_id) {
       return NextResponse.json(

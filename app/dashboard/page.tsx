@@ -103,11 +103,11 @@ export default function DashboardPage() {
       setUser(user)
 
       // Get user profile
-      const { data: profileData, error } = await supabase
+      const { data: profileData, error } = await (supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
-        .single() as { data: any; error: any }
+        .single as any)()
 
       if (error) {
         console.error('Error fetching profile:', error)
@@ -116,7 +116,7 @@ export default function DashboardPage() {
       }
 
       // Fetch recent updates
-      const { data: updatesData } = await supabase
+      const { data: updatesData } = await (supabase
         .from('rule_updates')
         .select(`
           id,
@@ -128,7 +128,7 @@ export default function DashboardPage() {
         `)
         .eq('is_published', true)
         .order('published_at', { ascending: false })
-        .limit(5)
+        .limit as any)(5)
 
       if (updatesData) {
         const formattedUpdates = updatesData.map((update: any) => ({
