@@ -8,7 +8,7 @@ import type { User as AppUser } from '@/types'
  */
 
 export async function getServerSession() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   try {
     const {
@@ -31,7 +31,7 @@ export async function getServerAppUser(): Promise<AppUser | null> {
   const user = await getServerUser()
   if (!user) return null
 
-  const supabase = createClient()
+  const supabase = await createClient()
   
   try {
     const { data: appUser, error } = await (supabase

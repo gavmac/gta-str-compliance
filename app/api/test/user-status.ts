@@ -13,13 +13,13 @@ export async function GET() {
     .from('users')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .single() as any
 
   const { data: subscription } = await supabase
     .from('subscriptions')
     .select('*')
     .eq('user_id', user.id)
-    .single()
+    .single() as any
 
   return NextResponse.json({
     user: {

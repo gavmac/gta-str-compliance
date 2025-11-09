@@ -6,7 +6,7 @@ export async function POST() {
 
   try {
     // Get paid users with properties
-    const { data: users } = await supabase
+    const { data: users } = await (supabase
       .from('users')
       .select(`
         id,
@@ -23,7 +23,7 @@ export async function POST() {
           )
         )
       `)
-      .eq('plan', 'paid')
+      .eq as any)('plan', 'paid')
 
     if (!users) {
       return NextResponse.json({ message: 'No paid users found' })

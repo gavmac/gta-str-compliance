@@ -21,16 +21,16 @@ export const adminOperations = {
     const supabase = createAdminClient()
     return await supabase
       .from('users')
-      .insert(userData)
+      .insert(userData as any)
       .select()
       .single()
   },
 
   async updateUserPlan(userId: string, plan: 'free' | 'paid') {
     const supabase = createAdminClient()
-    return await supabase
+    return await (supabase
       .from('users')
-      .update({ plan })
+      .update as any)({ plan })
       .eq('id', userId)
       .select()
       .single()
@@ -41,7 +41,7 @@ export const adminOperations = {
     const supabase = createAdminClient()
     return await supabase
       .from('subscriptions')
-      .insert(subscriptionData)
+      .insert(subscriptionData as any)
       .select()
       .single()
   },
@@ -52,9 +52,9 @@ export const adminOperations = {
     currentPeriodEnd?: string
   ) {
     const supabase = createAdminClient()
-    return await supabase
+    return await (supabase
       .from('subscriptions')
-      .update({ 
+      .update as any)({ 
         status,
         ...(currentPeriodEnd && { current_period_end: currentPeriodEnd })
       })
@@ -68,16 +68,16 @@ export const adminOperations = {
     const supabase = createAdminClient()
     
     // Get rules for the city
-    const { data: rules } = await supabase
+    const { data: rules } = await (supabase
       .from('rules')
       .select('*')
       .eq('city_id', cityId)
-      .eq('is_active', true)
+      .eq as any)('is_active', true)
 
     if (!rules) return { data: null, error: 'No rules found for city' }
 
     // Generate deadlines based on rules
-    const deadlines = rules.map(rule => {
+    const deadlines = rules.map((rule: any) => {
       // Calculate due date based on frequency_iso
       const dueDate = calculateDueDateFromFrequency(rule.frequency_iso)
       
@@ -89,9 +89,9 @@ export const adminOperations = {
       }
     })
 
-    return await supabase
+    return await (supabase
       .from('property_deadlines')
-      .upsert(deadlines, { 
+      .upsert as any)(deadlines, { 
         onConflict: 'property_id,rule_key',
         ignoreDuplicates: false 
       })
@@ -99,11 +99,11 @@ export const adminOperations = {
   },
 
   // Email tracking
-  async logEmailSent(emailData: Database['public']['Tables']['emails_sent']['Insert']) {
+  async logEmailSent(emailData: any) {
     const supabase = createAdminClient()
-    return await supabase
+    return await (supabase
       .from('emails_sent')
-      .insert(emailData)
+      .insert as any)(emailData)
       .select()
       .single()
   },
@@ -111,9 +111,9 @@ export const adminOperations = {
   // Content management
   async publishRuleUpdate(ruleUpdateId: number) {
     const supabase = createAdminClient()
-    return await supabase
+    return await (supabase
       .from('rule_updates')
-      .update({ 
+      .update as any)({ 
         is_published: true,
         published_at: new Date().toISOString()
       })
